@@ -14,6 +14,22 @@ interface GridSquare {
   letter?: string
 }
 
+interface RoamingSquare {
+  element: d3.Selection<SVGRectElement, unknown, null, undefined>
+  position: {
+    row: number
+    col: number
+  }
+}
+
+interface Particle {
+  x: number
+  y: number
+  vx: number
+  vy: number
+  life: number
+}
+
 export default function Home() {
   const svgRef = useRef<SVGSVGElement>(null)
 
@@ -147,7 +163,7 @@ export default function Home() {
 
     // Create multiple roaming squares (1 to 5)
     const numRoamingSquares = Math.floor(Math.random() * 5) + 1
-    const roamingSquares = []
+    const roamingSquares: RoamingSquare[] = []
 
     for (let i = 0; i < numRoamingSquares; i++) {
       let roamingPos = findRandomEmptySpot(gridMap)
@@ -176,8 +192,8 @@ export default function Home() {
     // Add explosion effect function
     function createExplosion(x: number, y: number) {
       const numParticles = 20
-      const particles = []
-        console.log('explosion')
+      const particles: Particle[] = []
+      
       // Create explosion particles
       for (let i = 0; i < numParticles; i++) {
         const angle = (Math.PI * 2 * i) / numParticles
@@ -426,13 +442,28 @@ export default function Home() {
       }
     })
 
+    function updateGrid() {
+      // Clear existing elements
+      svg.selectAll('*').remove()
+
+      // Recalculate dimensions
+      const width = window.innerWidth
+      const height = window.innerHeight
+      
+      // Update SVG size
+      svg.attr('width', width)
+        .attr('height', height)
+
+      // Re-run the initialization code
+      // ... (copy all the grid creation code here)
+    }
+
     // Handle window resize
     const handleResize = () => {
-      svg.selectAll('rect').remove()
       updateGrid()
     }
 
-    // Add mouse move handler (remove duplicate)
+    // Add mouse move handler
     svg.on('mousemove', handleMouseMove)
     window.addEventListener('resize', handleResize)
     
